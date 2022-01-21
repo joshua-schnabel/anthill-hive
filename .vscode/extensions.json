@@ -1,0 +1,14 @@
+{
+    "recommendations": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "aaron-bond.better-comments",
+		"vscode-icons-team.vscode-icons",
+		"eamodio.gitlens",
+		"christian-kohler.path-intellisense",
+        "eg2.vscode-npm-script",
+        "christian-kohler.npm-intellisense",
+        "esbenp.prettier-vscode",
+        "asciidoctor.asciidoctor-vscode"
+    ]
+}
