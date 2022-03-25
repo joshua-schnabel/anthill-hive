@@ -1,63 +1,46 @@
 import Fastify from "fastify";
 import fastifySensible from "fastify-sensible";
 import GracefulServer from "@gquittet/graceful-server";
-import getlogger, {defaultLogger} from "@logger";
+import getlogger from "@logger";
+import configuration from "@configuration";
+
+const serverLogger = getlogger("server");
+console.log(configuration.getCommand());
+serverLogger.warn("sss");
 
 const fastify = Fastify({
   logger: true
 });
-fastify.register(fastifySensible);
+await fastify.register(fastifySensible);
 
 const gracefulServer = GracefulServer(fastify.server);
 
 gracefulServer.on(GracefulServer.READY, () => {
-  console.log("Server is ready");
+  serverLogger.info("Server is ready");
 });
 
 gracefulServer.on(GracefulServer.SHUTTING_DOWN, () => {
-  console.log("Server is shutting down");
+  serverLogger.info("Server is shutting down");
 });
 
-gracefulServer.on(GracefulServer.SHUTDOWN, error => {
-  console.log("Server is down because of", error.message);
+gracefulServer.on(GracefulServer.SHUTDOWN, (error: { message: string; }) => {
+  serverLogger.info("Server is down because of", error.message);
   process.exit();
 });
 
 // Declare a route
-fastify.get("/", function (request, reply) {
-  reply.send({ hello: "world" });
+fastify.get("/", async function (request, reply) {
+  await reply.send({ hello: "world" });
 });
 
 // Run the server!
-const start = async () => {
+const start = async (): Promise<void> => {
   try {
-    await fastify.listen(3000);
+    await fastify.listen(<number>configuration.getNumberValue("port"));
     gracefulServer.setReady();
   } catch (err) {
-    fastify.log.error(err);
+    serverLogger.error(err);
     process.exit(1);
   }
 };
-start();
-
-const c = function (): void {
-  const v = function (): void {
-    throw new Error("Oh no!");
-  };
-  return v();
-};
-
-const abc = getlogger("abc");
-abc.info("Ich bin ein Test!");
-abc.warn("Ich bin ein Test!");
-try {
-  c();
-}
-catch (e) {
-  abc.warn(e);
-}
-const xyz = getlogger("xyz");
-xyz.error("Ich bin ein Test!");
-xyz.error("Ich bin ein '%s' Test!", "test");
-
-defaultLogger.error("Ich bin ein Test!");
+await start();

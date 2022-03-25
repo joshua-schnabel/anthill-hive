@@ -171,5 +171,6 @@
       ],
       "indent": "off",
       "@typescript-eslint/indent": ["error", 2],
+      "import/no-unresolved": [2, { "ignore": ["^@.+$"] }]
    }
 }

@@ -10,7 +10,8 @@
     "baseUrl": "./src/",
     "paths": {
       "@abc/*": ["abc/*"],
-      "@logger": ["framework/logger/logger"]
+      "@logger": ["framework/logger/logger"],
+      "@configuration": ["framework/configuration/configuration"]
     }
   },
   "include": ["src/**/*.ts"],

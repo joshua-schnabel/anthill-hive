@@ -11,7 +11,7 @@
       "editor.formatOnSave": false
     },
     "[markdown]": {
-      "editor.formatOnSave": false
+      "editor.formatOnSave": true
     },
     "search.exclude": {
       "**/node_modules": true,
