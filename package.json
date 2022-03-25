@@ -28,6 +28,7 @@
     "args-command-parser": "^1.2.4",
     "eslint-import-resolver-alias": "^1.1.2",
     "fastify": "^3.25.3",
+    "fastify-plugin": "^3.0.0",
     "fastify-sensible": "^3.1.2",
     "winston": "^3.4.0"
   },

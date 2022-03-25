@@ -9,7 +9,8 @@ console.log(configuration.getCommand());
 serverLogger.warn("sss");
 
 const fastify = Fastify({
-  logger: true
+  logger: fastifyLogger,
+  disableRequestLogging: true
 });
 await fastify.register(fastifySensible);
 
