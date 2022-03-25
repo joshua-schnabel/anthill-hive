@@ -100,12 +100,6 @@
       "@typescript-eslint/no-require-imports":"error",
       "@typescript-eslint/no-this-alias":"error",
       "@typescript-eslint/no-throw-literal":"error",
-      "@typescript-eslint/no-type-alias":[
-         "error",
-         {
-            "allowAliases":"always"
-         }
-      ],
       "@typescript-eslint/no-unsafe-call":"error",
       "@typescript-eslint/no-unsafe-member-access":"error",
       "@typescript-eslint/no-unsafe-return":"error",
@@ -159,8 +153,9 @@
          }
       ],
       "no-unused-vars":"off",
+      "unused-imports/no-unused-vars": "off",
       "unused-imports/no-unused-imports":"error",
-      "unused-imports/no-unused-vars":[
+      "@typescript-eslint/no-unused-vars":[
          "warn",
          {
             "vars":"all",
@@ -171,5 +166,6 @@
       ],
       "indent": "off",
       "@typescript-eslint/indent": ["error", 2],
+      "import/no-unresolved": ["off"]
    }
 }
