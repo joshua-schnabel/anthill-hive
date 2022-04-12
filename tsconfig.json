@@ -1,18 +1,35 @@
 {
-  "extends": "@tsconfig/node16/tsconfig.json",	
+  "extends": "@tsconfig/node16/tsconfig.json",
   "compilerOptions": {
     "typeRoots": ["./node_modules/@types"],
     "target": "ESNext",
     "module": "ESNext",
-	"moduleResolution": "node",
-	"esModuleInterop": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
     "outDir": "./dist/",
     "baseUrl": "./src/",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "paths": {
-      "@abc/*": ["abc/*"],
-      "@logger": ["framework/logger/logger"],
-      "@configuration": ["framework/configuration/configuration"]
-    }
+      "#ddd": ["framework/ddd/ddd.types"],
+      "#framework/*": ["framework/*"],
+      "#logger": ["framework/logger/logger"],
+      "#logger/*": ["framework/logger/*"],
+      "#configuration": ["framework/configuration/configuration"],
+      "#configuration/*": ["framework/configuration/*"],
+      "#app": ["framework/app/app"],
+      "#domain/*": ["application/domain/*"]
+    },
+    "plugins": [
+      {
+        "transform": "@automapper/classes/transformer-plugin",
+        "modelFileNameSuffix": [".types.js", ".entity.ts", ".dto.ts"]
+      }
+    ]
+  },
+  "tsc-alias": {
+    "verbose": true,
+    "resolveFullPaths": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]

@@ -1,14 +1,5 @@
-import ConfigurationDefinition, {DefinitionType} from "./ConfigurationDefinition";
+import ConfigurationDefinition, {DefinitionType} from "./configurationDefinition";
 import {parser, ArgCollection} from "args-command-parser";
-
-const portDefinition = new ConfigurationDefinition()
-  .withName("port")
-  .withType(DefinitionType.Number)
-  .withArgName("port")
-  .withEnvName("port")
-  .withDescription("Port of the server.")
-  .isRequired()
-  .withValidator("");
 
 class Configuration {
 
@@ -27,10 +18,41 @@ class Configuration {
     this.envPrefix = envPrefix;
   }
 
-  public getCommand (): string {
-    return this.arguments.data.commands.join(" ");
+  public validate (): void {
+    this.definitions.forEach((v, _k, _m) => {
+      const def = v;
+      const values = this.values.get(def.getName()) ?? [];
+      if(!def.getMultiple() && values.length > 1) 
+        throw new Error("No more than one value may be assigned to parameter '" + def.getName() + "'.");
+      if(def.getRequired() && (def.getCommands().length === 0 || def.getCommands().includes(this.getCommand())) && values.length === 0) 
+        throw new Error("Parameter '" + def.getName() + "' is required.");
+      for (const value of values) {
+        if(!def.getValidator().validate(value)) 
+          throw new Error("Parameter '" + def.getName() + "' does not meet the requirements: " + def.getValidator().description());
+      }
+    });
   }
 
+  public getDefinitions (): ConfigurationDefinition[] {
+    return Array.from(this.definitions.values());
+  }
+
+  /**
+ * Get the command from the arguments
+ * @returns The command that was passed in the arguments.
+ */
+  public getCommand (): string {
+    if(this.arguments.data.commands.length >= 1)
+      return this.arguments.data.commands[0];
+    else
+      return this.defaultCommand;
+  }
+
+  /**
+ * Get the value of a parameter
+ * @param {string} name - The name of the parameter.
+ * @returns The value of the parameter.
+ */
   public getValue (name: string): string | string[] | boolean | boolean[] | number | number[] | undefined {
     const def = this.definitions.get(name);
     const value = this.values.get(name) ?? [];
@@ -41,7 +63,6 @@ class Configuration {
           return result;
         }
         return result[0];
-        break;
       }
       case DefinitionType.Number: {
         const result: number[] = this.toInteger(value);
@@ -49,18 +70,21 @@ class Configuration {
           return result;
         }
         return result[0];
-        break;
       }
       case DefinitionType.String: {
         if(def.getMultiple()) {
           return value;
         }
         return value[0];
-        break;
       }
     }
   }
 
+  /**
+ * Get the value of a boolean parameter
+ * @param {string} name - The name of the parameter.
+ * @returns The value of the parameter.
+ */
   public getBooleanValue (name: string): boolean | boolean[] | undefined {
     const def = this.definitions.get(name);
     if(def?.getType() == DefinitionType.Boolean) {
@@ -98,6 +122,11 @@ class Configuration {
     }
     return undefined;
   }
+  /**
+ * Convert a string array to a boolean array
+ * @param {string[]} value - The value of the parameter.
+ * @returns The `toBoolean` function returns an array of booleans.
+ */
 
   private toBoolean (value: string[]): boolean[] {
     const result: boolean[] = [];
@@ -107,6 +136,11 @@ class Configuration {
     return result;
   }
   
+  /**
+ * It takes an array of strings and returns an array of numbers.
+ * @param {string[]} value - The value of the parameter.
+ * @returns The `toInteger` function returns an array of numbers.
+ */
   private toInteger (value: string[]): number[] {
     const result: number[] = [];
     for (const v of value) {
@@ -119,6 +153,7 @@ class Configuration {
   private getInternalValue (def: ConfigurationDefinition): string[] | undefined {
     let value = this.getArgValue(def);
     value = (value === undefined)?this.getEnvValue(def):value;
+    value = (value === undefined)?def.getDefaultValue():value;
     if(value !== undefined) {
       return value;
     }
@@ -143,7 +178,13 @@ class Configuration {
     }
     return undefined;
   }
-
 }
 
-export default new Configuration("startServer", "ant", portDefinition);
+let configInstance: Configuration;
+
+export function initConfiguration (envPrefix: string, ...definitions: ConfigurationDefinition[]): void {
+  configInstance  = new Configuration("help", envPrefix, ...definitions);
+}
+export default function config (): Configuration {
+  return configInstance;
+}

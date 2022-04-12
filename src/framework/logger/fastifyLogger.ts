@@ -70,24 +70,36 @@ export const plugin: FastifyPluginAsync<FastifyRequestLoggerOptions> = async (fa
     return false;
   };
 
+  const ifExists = (prefix: string, value: string): string => {
+    if(value.length >= 1) {
+      if(prefix.length >= 1) {
+        return prefix + " " + value;
+      }
+      return value;
+    }
+    return "";
+  };
+
   fastify.addHook("onRequest", async (request) => {
     if (isIgnoredRequest(request)) {
       return;
     }
     const id = request.id;
     const method = request.method;
-    const referrer = (request.headers["Referer"] ?? (request.headers["referer"]) ?? request.headers["Refferer"]) ?? request.headers["refferer"];
+    const referrer = (request.headers["Referer"] ?? (request.headers["referer"]) ?? request.headers["Refferer"]) ?? request.headers["refferer"] ?? "none";
     const remoteAddr = request.ip;
     const remoteUser = "???";
     const url = request.url;
     const httpVersion =  request.raw.httpVersion;
     const userAgent = request.headers["User-Agents"];
-    const contentLength = request.headers["content-length"];
+    const contentLength = request.headers["content-length"] ?? "";
 
-    request.log.info(`${chalk.bold.yellow("→")} ${chalk.yellow(method)} ${chalk.green(url)} HTTP/${httpVersion} - ${chalk.blue(remoteAddr)} ${remoteUser} - ${referrer} - ${contentLength} bytes [${id}]`);
-    request.log.trace(`${chalk.bold.yellow("→")} ${chalk.yellow(method)} ${chalk.green(url)} ${userAgent} [${id}]`);
+    console.log(JSON.stringify(request.headers));
+
+    request.log.info(`${chalk.bold.yellow("→")} ${chalk.yellow(method)} ${chalk.green(url)} HTTP/${httpVersion} - ${chalk.blue(remoteAddr)} ${ifExists("", remoteUser)} - ${referrer} ${ifExists("-", contentLength+" bytes")} [${chalk.greenBright(id)}]`);
+    request.log.trace(`${chalk.bold.yellow("→")} ${chalk.yellow(method)} ${chalk.green(url)} ${userAgent} [${chalk.greenBright(id)}]`);
     request.log.info(
-      `${chalk.bold.yellow("←")}${chalk.yellow(request.method)}:${chalk.green(
+      `${chalk.bold.yellow("← ")}${chalk.yellow(request.method)}:${chalk.green(
         request.url
       )} request from ip ${chalk.blue(request.ip)}${
         contentLength ? ` with a ${chalk.yellow(contentLength)}-length body` : ""

@@ -1,3 +1,5 @@
+import { DefinitionValidator } from "./configurationValidatior";
+
 export enum DefinitionType {
   String = "string",
   Boolean = "boolean",
@@ -9,11 +11,13 @@ class ConfigurationDefinition implements ConfigurationDefinition {
   private name!: string;
   private envName!: string;
   private argName!: string[];
-  private validator!: string;
+  private validator!: DefinitionValidator;
   private description!: string;
   private type!: DefinitionType;
   private multiple = false;
   private required = false;
+  private commands: string[] = [];
+  private defaultValue: string | undefined = undefined;
 
   public getName (): string {
     return this.name;
@@ -27,7 +31,7 @@ class ConfigurationDefinition implements ConfigurationDefinition {
     return this.argName;
   }
 
-  public getValidator (): string {
+  public getValidator (): DefinitionValidator {
     return this.validator;
   }
 
@@ -47,6 +51,17 @@ class ConfigurationDefinition implements ConfigurationDefinition {
     return this.multiple;
   }
 
+  public getCommands (): string[] {
+    return this.commands;
+  }
+
+  public getDefaultValue (): string[] | undefined {
+    if(this.defaultValue) {
+      return [this.defaultValue];
+    }
+    return undefined;
+  }
+
   public withName (name: string): ConfigurationDefinition {
     this.name = name;
     return this;
@@ -62,7 +77,7 @@ class ConfigurationDefinition implements ConfigurationDefinition {
     return this;
   }
 
-  public withValidator (validator: string): ConfigurationDefinition {
+  public withValidator (validator: DefinitionValidator): ConfigurationDefinition {
     this.validator = validator;
     return this;
   }
@@ -72,8 +87,18 @@ class ConfigurationDefinition implements ConfigurationDefinition {
     return this;
   }
 
+  public withDefault (defaultValue: string): ConfigurationDefinition {
+    this.defaultValue = defaultValue;
+    return this;
+  }
+
   public withType (type: DefinitionType): ConfigurationDefinition {
     this.type = type;
+    return this;
+  }
+
+  public relevantToCommands (...commands: string[]): ConfigurationDefinition {
+    this.commands = commands;
     return this;
   }
 

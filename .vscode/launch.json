@@ -1,20 +1,29 @@
 {
-	"version": "0.2.0",
-	"configurations": [{
-		"name": "Node Inspector",
-		"type": "node",
-		"request": "launch",
-		"args": ["${workspaceRoot}/src/server.ts"],
-		"runtimeArgs": ["--loader", "./src/myloader.mjs", "--experimental-top-level-await", "--experimental-specifier-resolution=node", "--experimental-specifier-resolution=node"],
-		"cwd": "${workspaceRoot}",
-		"protocol": "inspector",
-		"sourceMaps": true,
-		"trace": "all",
-		"outputCapture": "std",
-		"internalConsoleOptions": "openOnSessionStart",
-		"env": {
-			"TS_NODE_IGNORE": "false",
-			"NODE_ENV": "development"
-		}
-	}]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Node Inspector",
+      "type": "node",
+      "request": "launch",
+      "args": ["${workspaceRoot}/src/app.ts", "start", "-p", "1234"],
+      "runtimeArgs": [
+        "--no-warnings",
+        "--loader",
+        "./src/myloader.mjs",
+        "--experimental-modules",
+        "--es-module-specifier-resolution=node"
+      ],
+      "cwd": "${workspaceRoot}",
+      "protocol": "inspector",
+      "sourceMaps": true,
+      "trace": "all",
+      "outputCapture": "std",
+      "internalConsoleOptions": "openOnSessionStart",
+      "env": {
+        "TS_NODE_IGNORE": "false",
+        "NODE_ENV": "development",
+        "TS_NODE_COMPILER": "ttypescript"
+      }
+    }
+  ]
 }

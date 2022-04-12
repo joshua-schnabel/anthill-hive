@@ -5,7 +5,7 @@ const { combine, timestamp, label, printf, errors, splat } = format;
 
 // Custom logging format
 const customFormat = printf(({ level, message, label, timestamp, stack }) => {
-  return `${level}\t ${timestamp} · ${label || "-"}: ${message} ${stack || ""}`;
+  return `${level}\t ${timestamp} · ${label || "-"} \t· ${message} ${stack || ""}`;
 });
 
 const myCustomLevels = {
