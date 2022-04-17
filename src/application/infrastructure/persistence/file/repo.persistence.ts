@@ -9,8 +9,8 @@ export default class RepoFilePersistence implements RepoRepository {
 
   public constructor () {
     const x = new RepoId("xxxx");
-    const y = Repo.instantiate(x, "/xxx");
-    this.values.set(x, y);
+    // const y = Repo.builder().id(x).name("dddd").build();
+    // this.values.set(x, y);
   }
   
   public deleteAggregate (aggregate: Repo): void {
@@ -36,8 +36,9 @@ export default class RepoFilePersistence implements RepoRepository {
   public storeAggregate (aggregate: Repo): Repo {
     let id = aggregate.id;
     if(id) {
-      id = new RepoId("");
-      aggregate = Repo.instantiate(id, aggregate.path);
+      // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+      id = new RepoId(Math.random().toString(16).substr(2, 8));
+      // aggregate = Repo.builder().id(id).name(aggregate.name).build();
     }
     this.values.set(id as RepoId, aggregate);
     return aggregate;

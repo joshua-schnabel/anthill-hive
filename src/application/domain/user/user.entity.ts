@@ -1,6 +1,15 @@
 import { Identifier, Aggregate} from "#ddd";
+import { ITest } from "#framework/hello/test";
+
+interface YYYY {
+}
+
+export class XXX implements ITest, YYYY {
+  public xxx = "yyy";
   
-export default class User extends Aggregate<UserId>{
+}
+  
+export default class User extends Aggregate<UserId>  {
   private readonly _id: UserId | undefined;
 
   private readonly _name: string;
@@ -25,8 +34,16 @@ export default class User extends Aggregate<UserId>{
   public get password (): string {
     return this._password;
   }
- 
+
+  public xxx (): XXX {
+    return new XXX();
+  }
+
+  // public static builder (): Test {  
+  //  return (<unknown> Builder(User)) as Test;
+  //  } 
 }
+
 export class UserId extends Identifier<string> {
   private readonly _value: string;
 

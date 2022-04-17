@@ -17,15 +17,13 @@ export class RepoId extends Identifier<string> {
 export default class Repo extends Aggregate<RepoId>{
   
   private readonly _id?: RepoId;
-  private readonly _name: string;
+  private _name = "";
 
   private readonly _userAssignment: UserAssignment[] = [];
   
-  public constructor (id: RepoId| undefined, name: string, userAssignment: UserAssignment[]) {
+  public constructor (id: RepoId| undefined) {
     super();
     this._id = id;
-    this._name = name;
-    this._userAssignment = userAssignment;
   }
 
   public get id (): RepoId | undefined {
@@ -36,6 +34,10 @@ export default class Repo extends Aggregate<RepoId>{
     return this._name;
   }
 
+  public set name (name: string) {
+    this._name = name;
+  }
+
   public get path (): string {
     return "/" + this._name;
   }
@@ -44,18 +46,17 @@ export default class Repo extends Aggregate<RepoId>{
     return this._userAssignment;
   }
 
-  public addUserAssignment (userAssignment: UserAssignment): void {
-    this._userAssignment.push(userAssignment);
-  }
-
-  public removeUserAssignment (userAssignment: UserAssignment): void {
-    this._userAssignment.filter(item => item !== userAssignment);
-  }
-    
-  // public static builder (): IBuilder<Repo> {
-  //  return <IBuilder<Repo>> <unknown>Builder(Repo);
-  // }
+  // public static builder (): IBuilder<Repo> {  
+  //  return (<unknown> Builder(Repo)) as IBuilder<Repo>;
+  // }  
 }
+
+export type RepoBuilder = {
+  [k in keyof Repo]-?: (arg: Repo[k]) => RepoBuilder
+}
+& {
+  build(): Repo;
+};
 
 export class RepoIdGenerator implements IdentifierGenerator<RepoId> {
   public generate (): RepoId {

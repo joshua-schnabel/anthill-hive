@@ -10,6 +10,7 @@
     "baseUrl": "./src/",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "noImplicitAny": true,
     "paths": {
       "#ddd": ["framework/ddd/ddd.types"],
       "#framework/*": ["framework/*"],
@@ -23,7 +24,7 @@
     "plugins": [
       {
         "transform": "@automapper/classes/transformer-plugin",
-        "modelFileNameSuffix": [".types.js", ".entity.ts", ".dto.ts"]
+        "modelFileNameSuffix": [".types2.js", ".entity2.ts", ".dto2.ts"]
       }
     ]
   },

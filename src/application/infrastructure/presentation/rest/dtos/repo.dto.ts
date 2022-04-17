@@ -4,7 +4,7 @@ import { mapper } from "#framework/mapper/mapper";
 
 export class RepoDto {
   public id!: string;
-  public path!: string;
+  public name!: string;
 }
 
 createMap(mapper, Repo, RepoDto, forMember(
@@ -13,6 +13,6 @@ createMap(mapper, Repo, RepoDto, forMember(
 
 createMap(mapper, RepoDto, Repo,
   constructUsing((sourceObject, _destinationIdentifier): Repo => {
-    return new Repo(new RepoId(sourceObject.id), sourceObject.path);
+    return new Repo(new RepoId(sourceObject.id));
   })
 );
