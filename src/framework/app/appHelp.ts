@@ -8,65 +8,26 @@ import { AppCommand } from "#app";
 
 /* The `AppHelp` class is responsible for printing out the help message */
 export default class AppHelp {
-  
+
   /**
  * Prints the help message
  * @param commands - A map of all the commands that the program can run.
  */
-  public printHelp (commands: Map<string, AppCommand>): void {
+  public printHelp (commands: Map<string, AppCommand>, envPrefix: string): void {
     const programm = process.argv.slice(0, 2).join(" ");
     const underline = clc.underline;
-    console.log(underline("Usage")+"\n");
-    console.log("\t"+ programm + " [COMMAND] [OPTIONS]"+"\n");
-    console.log(underline("Commands")+"\n");
+    console.log(underline("Usage") + "\n");
+    console.log("\t" + programm + " [COMMAND] [OPTIONS]" + "\n");
+    console.log(underline("Commands") + "\n");
     this.printCommands(commands);
     console.log();
     console.log(underline("Options"));
     console.log();
-    this.printOptions((def) => def.getCommands().length >= 1);
+    this.printOptions(envPrefix, (def) => def.getCommands().length >= 1);
     console.log();
     console.log(underline("Rules & Behavior"));
     console.log();
-    this.printOptions((def) => def.getCommands().length == 0);
-  }
-
-  /**
- * Prints all commands and their descriptions
- * @param commands - Map<string, AppCommand>
- */
-  private printCommands (commands: Map<string, AppCommand>): void {
-    commands.forEach((v, k, _m) => {
-      console.log("\t" + k + " - " + v.getDescriptions());
-      const paramaters: string[] = [];
-      // Find parameters for current command
-      for (const def of this.getConfigurationDefinitions()) {
-        if (def.getCommands().includes(k)) {
-          paramaters.push(this.generateParameters(def));
-        }
-      }
-      console.log("\t↳ " + k + " " + paramaters.join(" "));
-    });
-  }
-
-  /**
- * Prints out all the options that are available to the user
- * @param condition - Select witch options are printed.
- */
-  private printOptions (condition: (a: ConfigurationDefinition) => boolean): void {
-    let maxLength = 0;
-    /* Find longest String */
-    for (const def of this.getConfigurationDefinitions()) {
-      if (condition(def)) {
-        const option = " -" + def.getArgName().sort((a, b) => a.length - b.length).join(" -");
-        maxLength = Math.max(maxLength, option.length);
-      }
-    }
-    for (const def of this.getConfigurationDefinitions()) {
-      if (condition(def)) {
-        const option = " -" + def.getArgName().sort((a, b) => a.length - b.length).join(" -");
-        console.log("\t↳ " + (option.padEnd(maxLength, " ")) + " - " + def.getDescription());
-      }
-    }
+    this.printOptions(envPrefix, (def) => def.getCommands().length == 0);
   }
 
   /**
@@ -105,6 +66,48 @@ export default class AppHelp {
       else
         return a.getName() < b.getName() ? -1 : 1;
     });
+  }
+
+  /**
+ * Prints all commands and their descriptions
+ * @param commands - Map<string, AppCommand>
+ */
+  private printCommands (commands: Map<string, AppCommand>): void {
+    commands.forEach((v, k, _m) => {
+      console.log("\t" + k + " - " + v.getDescriptions());
+      const paramaters: string[] = [];
+      // Find parameters for current command
+      for (const def of this.getConfigurationDefinitions()) {
+        if (def.getCommands().includes(k)) {
+          paramaters.push(this.generateParameters(def));
+        }
+      }
+      console.log("\t↳ " + k + " " + paramaters.join(" "));
+    });
+  }
+
+  /**
+ * Prints out all the options that are available to the user
+ * @param condition - Select witch options are printed.
+ */
+  private printOptions (envPrefix: string, condition: (a: ConfigurationDefinition) => boolean): void {
+    let maxLength = 0;
+    /* Find longest String */
+    for (const def of this.getConfigurationDefinitions()) {
+      if (condition(def)) {
+        let option = " -" + def.getArgName().sort((a, b) => a.length - b.length).join(" -");
+        option += " (" + envPrefix + "_" + def.getEnvName().toUpperCase()+")";
+        maxLength =
+          Math.max(maxLength, option.length);
+      }
+    }
+    for (const def of this.getConfigurationDefinitions()) {
+      if (condition(def)) {
+        let option = " -" + def.getArgName().sort((a, b) => a.length - b.length).join(" -");
+        option += " (" + envPrefix + "_" + def.getEnvName().toUpperCase()+")";
+        console.log("\t↳ " + (option.padEnd(maxLength, " ")) + " - " + def.getDescription());
+      }
+    }
   }
 
 }

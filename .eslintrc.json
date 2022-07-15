@@ -139,7 +139,7 @@
             "private-static-method",
             "private-method"
           ],
-          "order": "alphabetically"
+          "order": "as-written"
         }
       }
     ],

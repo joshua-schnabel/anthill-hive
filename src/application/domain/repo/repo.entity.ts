@@ -51,13 +51,6 @@ export default class Repo extends Aggregate<RepoId>{
   // }  
 }
 
-export type RepoBuilder = {
-  [k in keyof Repo]-?: (arg: Repo[k]) => RepoBuilder
-}
-& {
-  build(): Repo;
-};
-
 export class RepoIdGenerator implements IdentifierGenerator<RepoId> {
   public generate (): RepoId {
     return new RepoId(randomUUID());

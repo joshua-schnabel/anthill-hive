@@ -1,10 +1,9 @@
 import User, { UserId } from "#domain/user/user.entity";
 import { UserRepository } from "#domain/user/user.repo";
 import { Injectable } from "@nestjs/common";
-import { ITest } from "#framework/hello/test";
 
 @Injectable()
-export default class UserFilePersistence implements UserRepository, ITest {
+export default class UserFilePersistence implements UserRepository {
   public xxx = "";
     
   private readonly values: Map<UserId, User> = new Map();

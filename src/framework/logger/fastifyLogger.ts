@@ -1,55 +1,10 @@
 /* eslint-disable @typescript-eslint/require-await */
-import { FastifyLogFn, FastifyLoggerInstance, FastifyPluginAsync, FastifyRequest} from "fastify";
+import { FastifyPluginAsync, FastifyRequest} from "fastify";
 import fastifyPlugin from "fastify-plugin";
-import { Bindings } from "fastify/types/logger";
-import getlogger from "./logger";
 import chalk from "chalk";
+import logadapter from "./pinoLoggerAdapter";
 
-const logger = getlogger("fastify");
-const customLogger: FastifyLoggerInstance = {
-  info: function (obj: unknown, msg?: string, ...args: unknown[]): void {
-    if(typeof obj === "string")
-      logger.info(obj, msg, ...args);
-    else if(msg)
-      logger.info(msg, obj, ...args);
-  } as FastifyLogFn,
-  warn: function (obj: unknown, msg?: string, ...args: unknown[]): void {
-    if(typeof obj === "string")
-      logger.warning(obj, msg, ...args);
-    else if(msg)
-      logger.warning(msg, obj, ...args);
-  } as FastifyLogFn,
-  error: function (obj: unknown, msg?: string, ...args: unknown[]): void {
-    if(typeof obj === "string")
-      logger.error(obj, msg, ...args);
-    else if(msg)
-      logger.error(msg, obj, ...args);
-  } as FastifyLogFn,
-  fatal: function (obj: unknown, msg?: string, ...args: unknown[]): void {
-    if(typeof obj === "string")
-      logger.fatal(obj, msg, ...args);
-    else if(msg)
-      logger.fatal(msg, obj, ...args);
-  } as FastifyLogFn,
-  trace: function (obj: unknown, msg?: string, ...args: unknown[]): void {
-    if(typeof obj === "string")
-      logger.trace(obj, msg, ...args);
-    else if(msg)
-      logger.trace(msg, obj, ...args);
-  } as FastifyLogFn,
-  debug: function (obj: unknown, msg?: string, ...args: unknown[]): void {
-    if(typeof obj === "string")
-      logger.debug(obj, msg, ...args);
-    else if(msg)
-      logger.debug(msg, obj, ...args);
-  } as FastifyLogFn,
-  child: function (_bindings: Bindings): FastifyLoggerInstance {
-    return customLogger;
-  },
-  setBindings: function (_bindings: Bindings): void {
-    // OK
-  }
-};
+// const logger = getlogger("fastify");
 
 export type FastifyRequestLoggerOptions = {
   logBody?: boolean;
@@ -153,15 +108,9 @@ export const plugin: FastifyPluginAsync<FastifyRequestLoggerOptions> = async (fa
   });
 };
 
-declare module "fastify" {
-  interface FastifyLoggerInstance {
-    setBindings(bindings: Bindings): void;
-  }
-}
-
 export const fastifyRequestLogger = fastifyPlugin(plugin, {
-  fastify: "3.x",
+  fastify: "4.x",
   name: "fastify-request-logger",
 });
 
-export const fastifyLogger = customLogger;
+export const fastifyLogger = logadapter;

@@ -7,17 +7,20 @@ import getLogger from "#logger";
 import { Logger } from "winston";
 import AppHelp from "./appHelp";
 
+// TODO: move to App
+const ENV_PREFIX = "ANT";
+
 export abstract class AppCommand {
   public abstract getDescriptions (): string;
+  public abstract getName (): string;
   public abstract run (): void;
 
-  public abstract getName (): string;
 }
 
 export default abstract class App {
 
-  private readonly commands: Map<string, AppCommand> = new Map();
   private readonly appHelp: AppHelp;
+  private readonly commands: Map<string, AppCommand> = new Map();
   private readonly logger: Logger;
 
   public constructor () {
@@ -26,19 +29,22 @@ export default abstract class App {
     this.appHelp = new AppHelp();
     this.logger = getLogger("app");
     this.addCommmand(new (class implements AppCommand {
-      public getName (): string {
-        return "help";
-      }
 
       public getDescriptions (): string {
         return "Show help for this application.";
       }
 
+      public getName (): string {
+        return "help";
+      }
+
       public run (): void {
-        that.appHelp.printHelp(that.commands);
+        that.appHelp.printHelp(that.commands, ENV_PREFIX);
       }
     }));
   }
+  
+  public abstract commmands (setCommands: (...commands: AppCommand[]) => void): void;
 
   /**
  * It executes the commands and options.
@@ -51,7 +57,7 @@ export default abstract class App {
       console.log();
     });
     this.options((...defs): void => {
-      initConfiguration("XXX", ...defs);
+      initConfiguration(ENV_PREFIX, ...defs);
     });
     this.printBanner();
     configuration().validate();
@@ -65,13 +71,12 @@ export default abstract class App {
     }
   }
 
+  public abstract options (setDefinitions: (...definitions: ConfigurationDefinition[]) => void): void;
+  
+  public abstract printBanner (): void;
+
   private addCommmand (command: AppCommand): void {
     this.commands.set(command.getName(), command);
   }
-
-  public abstract options (setDefinitions: (...definitions: ConfigurationDefinition[]) => void): void;
-  
-  public abstract commmands (setCommands: (...commands: AppCommand[]) => void): void;
-  public abstract printBanner (): void;
 
 }

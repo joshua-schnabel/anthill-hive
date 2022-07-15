@@ -24,8 +24,9 @@
     "plugins": [
       {
         "transform": "@automapper/classes/transformer-plugin",
-        "modelFileNameSuffix": [".types2.js", ".entity2.ts", ".dto2.ts"]
-      }
+        "modelFileNameSuffix": [".types.js", ".entity.ts", ".dto.ts"]
+      },
+      { "transform": "typescript-rtti/dist/transformer" }
     ]
   },
   "tsc-alias": {

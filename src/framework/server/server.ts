@@ -1,14 +1,20 @@
-import fastifySensible from "fastify-sensible";
 import GracefulServer from "@gquittet/graceful-server";
 import getlogger from "#logger";
-import {fastifyLogger, fastifyRequestLogger} from "#logger/fastifyLogger";
+import {fastifyRequestLogger, fastifyLogger} from "#logger/fastifyLogger";
 import { Logger } from "winston";
-import IGracefulServer from "@gquittet/graceful-server/lib/types/interface/gracefulServer";
 import configuration from "#configuration";
 import { NestFactory } from "@nestjs/core";
 import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
 import { AppModule } from "../../app.module";
 import NestLogger from "#framework/logger/nestLogger";
+import { EventEmitter } from "events";
+import fastifySensible from "@fastify/sensible";
+
+interface IGracefulServer {
+  isReady: () => boolean;
+  setReady: () => void;
+  on: (name: string, callback: (...args: any[]) => void) => EventEmitter;
+}
 
 export default class Server {
   private readonly logger: Logger;
@@ -40,7 +46,8 @@ export default class Server {
       new FastifyAdapter({
         logger: fastifyLogger,
         disableRequestLogging: true
-      }), {
+      }), 
+      {
         logger: new NestLogger(),
       }
     );

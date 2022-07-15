@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable no-console */
+import "reflect-metadata";
 import clc from "cli-color";
 import App, { AppCommand } from "#app";
 import ConfigurationDefinition, { DefinitionType } from "#configuration/configurationDefinition";
 import definitionValidators from "#configuration/configurationValidatior";
 import Server from "#framework/server/server";
-import getlogger,  { defaultLogger } from "#logger";
+import getlogger, { defaultLogger } from "#logger";
 
 const app: App = new (class extends App {
   public options (setDefinitions: (...definitions: ConfigurationDefinition[]) => void): void {
