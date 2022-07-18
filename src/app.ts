@@ -7,6 +7,9 @@ import ConfigurationDefinition, { DefinitionType } from "#configuration/configur
 import definitionValidators from "#configuration/configurationValidatior";
 import Server from "#framework/server/server";
 import getlogger, { defaultLogger } from "#logger";
+import {Builder} from "#framework/builder/builder";
+
+const x = Builder<App>(Server);
 
 const app: App = new (class extends App {
   public options (setDefinitions: (...definitions: ConfigurationDefinition[]) => void): void {

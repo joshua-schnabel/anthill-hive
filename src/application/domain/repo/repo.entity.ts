@@ -15,13 +15,15 @@ export class RepoId extends Identifier<string> {
   }
 }
 export default class Repo extends Aggregate<RepoId>{
-  
+
   private readonly _id?: RepoId;
   private _name = "";
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+  private readonly _count = 1;
 
   private readonly _userAssignment: UserAssignment[] = [];
-  
-  public constructor (id: RepoId| undefined) {
+
+  public constructor (id: RepoId | undefined) {
     super();
     this._id = id;
   }
@@ -41,14 +43,21 @@ export default class Repo extends Aggregate<RepoId>{
   public get path (): string {
     return "/" + this._name;
   }
- 
+
   public get userAssignment (): UserAssignment[] {
     return this._userAssignment;
   }
 
-  // public static builder (): IBuilder<Repo> {  
-  //  return (<unknown> Builder(Repo)) as IBuilder<Repo>;
-  // }  
+  public addUserAssignment (ua: UserAssignment): UserAssignment[] {
+    this._userAssignment.push(ua);
+    return this._userAssignment;
+  }
+}
+
+export interface IRepoBuider {
+  name: string;
+  id: RepoId;
+  addUserAssignment: UserAssignment;
 }
 
 export class RepoIdGenerator implements IdentifierGenerator<RepoId> {
